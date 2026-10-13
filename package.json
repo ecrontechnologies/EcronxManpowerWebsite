@@ -1,8 +1,21 @@
 {
   "name": "ecronx-manpower-website",
   "version": "1.0.0",
-  "description": "Ecronx Technologies manpower services website with admin-managed gallery and services",
-  "main": "server.js",
-  "scripts": { "start": "node server.js" },
-  "engines": { "node": ">=18" }
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "npm run build:local && cross-env SERVE_FRONTEND=true node backend/server.js",
+    "build:local": "cross-env API_BASE_URL=http://localhost:3000 npm run build --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "check": "npm run check --prefix backend && npm run check --prefix frontend"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
 }

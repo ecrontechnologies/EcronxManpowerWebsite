@@ -1,12 +1,17 @@
 # Ecronx Technologies — Manpower & Attendance
 
-This project keeps the existing Ecronx Manpower website, admin panel, services, gallery, contact details and enquiry form, and adds an integrated employee attendance portal. It uses Node.js built-in modules and server-side JSON files; no Express, database, cloud service or npm packages are required.
+This project keeps the existing Ecronx Manpower website, admin panel, services, gallery, contact details and enquiry form, and adds an integrated employee attendance portal. The static HTML/CSS/JavaScript frontend is in `frontend/`; the Express API and JSON-file persistence are in `backend/`.
 
 ## Requirements and run on Windows
 
 - Node.js 18 or newer.
-- Extract the project ZIP to a folder, open that folder in File Explorer, type `cmd` in the address bar and press Enter.
-- Configure the existing website administrator credentials in that Command Prompt window, then start the server:
+- From the project root, install the frontend and backend dependencies:
+
+```sh
+npm install
+```
+
+- Configure the administrator credentials and start both local servers from the project root:
 
 ```bat
 set ADMIN_USER=admin
@@ -28,6 +33,7 @@ Keep the terminal open and visit:
 
 - Website: `http://localhost:3000/`
 - Attendance: `http://localhost:3000/attendance`
+- Backend API: `http://localhost:3000/`
 - Existing content admin: click **Admin access** in the website footer.
 
 The same `ADMIN_USER` and `ADMIN_PASS` credentials are used for the existing website admin and the attendance dashboard. Admin login is disabled until these environment variables are configured; there is no built-in demo password. Set a strong, unique password and do not share it. The environment variables must be configured again in each new terminal session, or set persistently using Windows Environment Variables. Never commit a real password to the project or share it with employees.
@@ -57,9 +63,9 @@ Backups include employee account hashes and salts so employee accounts can be re
 
 ### Restore from a JSON backup
 
-1. Stop the server and make a separate copy of the whole current `data` folder.
+1. Stop the server and make a separate copy of the whole current `backend/data` folder.
 2. Open the admin-only JSON backup in a trusted local editor. The backup has `employees`, `attendance`, `sites` and `correctionRequests` arrays.
-3. Replace the contents of `data/attendance-employees.json`, `data/attendance-records.json`, `data/attendance-sites.json` and `data/attendance-corrections.json` with the corresponding JSON arrays from the backup. Each file must contain a JSON array. Leave `data/content.json` and unrelated website data unchanged.
+3. Replace the contents of `backend/data/attendance-employees.json`, `backend/data/attendance-records.json`, `backend/data/attendance-sites.json` and `backend/data/attendance-corrections.json` with the corresponding JSON arrays from the backup. Each file must contain a JSON array. Leave `backend/data/content.json` and unrelated website data unchanged.
 4. Start the server again and verify accounts and records in the attendance dashboard.
 
 The backup contains records only for its selected date range, while employee/site data is included as a whole. For full-history recovery, choose a date range spanning all required attendance and correction dates. Keep the backup and its account hashes private.
@@ -68,17 +74,17 @@ The backup contains records only for its selected date range, while employee/sit
 
 Attendance data is kept on the computer running the Node.js server:
 
-- `data/attendance-employees.json` — employee account metadata and scrypt password hashes.
-- `data/attendance-records.json` — attendance, timestamps and check-in/out GPS fixes.
-- `data/attendance-sites.json` — client and site details.
-- `data/attendance-corrections.json` — submitted and reviewed correction requests.
-- `data/attendance-backups.json` — date, range and format of completed backup downloads.
+- `backend/data/attendance-employees.json` — employee account metadata and scrypt password hashes.
+- `backend/data/attendance-records.json` — attendance, timestamps and check-in/out GPS fixes.
+- `backend/data/attendance-sites.json` — client and site details.
+- `backend/data/attendance-corrections.json` — submitted and reviewed correction requests.
+- `backend/data/attendance-backups.json` — date, range and format of completed backup downloads.
 
 Files are created automatically as empty JSON arrays the first time the API is used. Mutations are serialized to avoid concurrent JSON updates overwriting one another, and files are atomically replaced. Keep this project folder on a reliable local disk, restrict Windows folder permissions, and include these files in your normal secure backup plan. Do not place sensitive files in a public web directory.
 
 ## Existing website features
 
-The existing responsive marketing pages, logo, images, contact information, editable services and gallery, enquiries and website admin remain in place. The new **Attendance** navigation item links to the integrated portal. Website admin uploads remain in `uploads/`; enquiries continue to be stored in `data/content.json`.
+The existing responsive marketing pages, logo, images, contact information, editable services and gallery, enquiries and website admin remain in place. The new **Attendance** navigation item links to the integrated portal. Website admin uploads remain in `backend/uploads/`; enquiries continue to be stored in `backend/data/content.json`.
 
 ## Screenshots
 

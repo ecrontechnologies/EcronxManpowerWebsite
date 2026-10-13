@@ -2,13 +2,16 @@ const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 let adminToken = '';
 let content = null;
+const API_BASE_URL = String(window.APP_CONFIG?.API_BASE_URL || '').replace(/\/+$/, '');
+const apiUrl = (url) => `${API_BASE_URL}${url.startsWith('/') ? url : `/${url}`}`;
 
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
 }[char]));
 
 function imageSource(value) {
-  return value || 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=80';
+  if (!value) return 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=80';
+  return value.startsWith('/uploads/') ? apiUrl(value) : value;
 }
 
 async function api(url, options = {}) {
@@ -17,7 +20,7 @@ async function api(url, options = {}) {
     ...(adminToken ? { Authorization: `Bearer ${adminToken}` } : {}),
     ...(options.headers || {}),
   };
-  const response = await fetch(url, { ...options, headers });
+  const response = await fetch(apiUrl(url), { ...options, headers });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || 'Request failed. Please try again.');
   return data;
