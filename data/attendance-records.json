@@ -1,0 +1,26 @@
+[
+  {
+    "id": "7799e15e-d8ac-4340-bdec-0580d697f3f0",
+    "employeeId": "51ff2b69-291e-4fef-9f3a-40a339a828d9",
+    "employeeName": "Sushmitha U",
+    "username": "ecx-100",
+    "siteId": "",
+    "date": "2026-10-12",
+    "status": "Present",
+    "checkIn": {
+      "latitude": 12.807791,
+      "longitude": 80.075124,
+      "accuracy": 500,
+      "address": null,
+      "timestamp": "2026-10-12T05:59:48.639Z"
+    },
+    "checkOut": {
+      "latitude": 12.807300000000001,
+      "longitude": 80.074947,
+      "accuracy": 141,
+      "address": null,
+      "timestamp": "2026-10-12T11:34:05.925Z"
+    },
+    "source": "gps"
+  }
+]

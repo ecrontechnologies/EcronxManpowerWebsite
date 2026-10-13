@@ -1,0 +1,12 @@
+[
+  {
+    "id": "51ff2b69-291e-4fef-9f3a-40a339a828d9",
+    "username": "ecx-100",
+    "name": "Sushmitha U",
+    "passwordSalt": "519956af6486959294887289048ac162",
+    "passwordHash": "9ae205600a198540963bca62484d04083c91b0c9a654735f610dd445b29be28bc8e79622fabe17b7e7a0f1a8a2e74cb148a8494fd94f4bd73170db54bbf1d25d",
+    "siteId": "",
+    "active": true,
+    "createdAt": "2026-10-12T05:57:02.052Z"
+  }
+]

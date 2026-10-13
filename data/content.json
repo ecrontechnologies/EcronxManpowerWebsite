@@ -1,0 +1,71 @@
+{
+  "settings": {
+    "companyName": "Ecronx Technologies Pvt Ltd",
+    "tagline": "Your Trusted Partner in Manpower Solutions",
+    "phone": "+91 81222 36894",
+    "whatsapp": "918122236894",
+    "email": "info@ecronxtechnologies.com",
+    "address": "37–383 MKN Road, Alandur, Chennai – 600016, Tamil Nadu, India"
+  },
+  "services": [
+    {
+      "id": "s1",
+      "name": "Housekeeping Staff",
+      "description": "Reliable housekeeping staff for hotels, offices and commercial facilities.",
+      "image": "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=900&q=80",
+      "active": true
+    },
+    {
+      "id": "s2",
+      "name": "Security Personnel",
+      "description": "Professional security personnel to support your workplace and site safety.",
+      "image": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=900&q=80",
+      "active": true
+    },
+    {
+      "id": "s3",
+      "name": "Industrial Workers",
+      "description": "Skilled and semi-skilled workforce for industrial and warehouse operations.",
+      "image": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=900&q=80",
+      "active": true
+    },
+    {
+      "id": "s4",
+      "name": "Office & Front Desk Staff",
+      "description": "Professional reception, office support and front-desk staffing solutions.",
+      "image": "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=80",
+      "active": true
+    }
+  ],
+  "gallery": [
+    {
+      "id": "g1",
+      "title": "Our Workforce",
+      "category": "Manpower",
+      "image": "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      "id": "g2",
+      "title": "Professional Workplace",
+      "category": "Office",
+      "image": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      "id": "g3",
+      "title": "Team Training",
+      "category": "Training",
+      "image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80"
+    }
+  ],
+  "enquiries": [
+    {
+      "id": "0d467c65-8818-4939-ac60-caccd430d1e3",
+      "name": "sushmitha udaya",
+      "email": "mailtosush27@gmail.com",
+      "mobile": "+918270071804",
+      "service": "Office & Front Desk Staff",
+      "message": "",
+      "date": "2026-10-11T11:16:36.685Z"
+    }
+  ]
+}

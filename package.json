@@ -1,0 +1,8 @@
+{
+  "name": "ecronx-manpower-website",
+  "version": "1.0.0",
+  "description": "Ecronx Technologies manpower services website with admin-managed gallery and services",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071b31">
+  <meta name="description" content="Secure Ecronx employee attendance and administration portal.">
+  <title>Attendance | Ecronx Technologies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css?v=3">
+  <link rel="stylesheet" href="/attendance.css">
+</head>
+<body class="attendance-body">
+  <header class="attendance-header">
+    <a class="brand" href="/" aria-label="Ecronx Technologies home"><img src="/ecronx-logo.jpeg" alt="Ecronx Technologies Pvt Ltd" width="235" height="66"></a>
+    <nav aria-label="Attendance navigation"><a href="/">Company website</a><span>Attendance</span><button id="portalLogout" class="button button-quiet hidden" type="button">Logout</button></nav>
+  </header>
+  <main class="attendance-main">
+    <section class="attendance-intro">
+      <div>
+        <span class="eyebrow"><span class="eyebrow-dot"></span> Ecronx Manpower Service portal</span>
+        <h1>Attendance,<br><span>made accountable.</span></h1>
+        <p>Secure employee check-in and attendance administration for your teams.</p>
+      </div>
+      <div class="intro-mark" aria-hidden="true"><span>EC</span><i></i></div>
+    </section>
+
+    <section id="loginCard" class="attendance-card login-card">
+      <div class="login-heading"><div><span class="eyebrow">Secure access</span><h2>Welcome back Ecronx Manpower Login</h2></div><span class="secure-mark">PRIVATE<br>PORTAL</span></div>
+      <div class="login-switch" role="tablist" aria-label="Choose sign-in type">
+        <button class="login-tab active" type="button" role="tab" aria-selected="true" data-login="employee">Employee</button>
+        <button class="login-tab" type="button" role="tab" aria-selected="false" data-login="admin">Administrator</button>
+      </div>
+      <form id="employeeLoginForm" class="login-form">
+        <label>Employee username<input name="username" required autocomplete="username"></label>
+        <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
+        <button class="button button-submit" type="submit">Sign in to attendance <span aria-hidden="true">↗</span></button>
+        <p id="employeeLoginStatus" class="portal-status" aria-live="polite"></p>
+      </form>
+      <form id="adminLoginForm" class="login-form hidden">
+        <label>Admin username<input name="username" required autocomplete="username"></label>
+        <label>Admin password<input name="password" type="password" required autocomplete="current-password"></label>
+        <button class="button button-submit" type="submit">Open admin dashboard <span aria-hidden="true">↗</span></button>
+        <p id="adminLoginStatus" class="portal-status" aria-live="polite"></p>
+      </form>
+      <p class="location-note"><span aria-hidden="true">◎</span> GPS is requested only when you press Check in or Check out. Location is not tracked in the background.</p>
+    </section>
+
+    <section id="employeeDashboard" class="hidden">
+      <div class="portal-title"><div><span class="eyebrow">Employee attendance</span><h2>Good day, <span id="employeeName"></span></h2><p id="employeeSite" class="muted"></p></div></div>
+      <div class="employee-layout">
+        <article class="attendance-card today-card">
+          <div class="card-heading"><div><span class="eyebrow">Today</span><h3 id="todayDate"></h3></div><span id="attendancePill" class="status-pill">Not checked in</span></div>
+          <div class="clock-row"><div><small>CHECK IN</small><strong id="todayCheckIn">—</strong></div><span class="clock-divider"></span><div><small>CHECK OUT</small><strong id="todayCheckOut">—</strong></div></div>
+          <div class="work-total"><span>Working time</span><strong id="todayHours">—</strong></div>
+          <div class="attendance-actions"><button id="checkInButton" class="button button-submit" type="button">Check in <span aria-hidden="true">↗</span></button><button id="checkOutButton" class="button button-quiet" type="button">Check out <span aria-hidden="true">↗</span></button></div>
+          <p id="gpsStatus" class="portal-status" aria-live="polite"></p>
+        </article>
+        <article class="attendance-card policy-card"><span class="eyebrow">Your privacy matters</span><h3>Location, only when needed.</h3><p>Each check-in and check-out records one GPS fix, its accuracy, and the time. Your location is never continuously tracked. Location access requires HTTPS or localhost.</p><span class="privacy-rule"></span><small>For a location issue, allow location permission in your browser and retry.</small></article>
+      </div>
+      <article class="attendance-card records-card"><div class="card-heading"><div><span class="eyebrow">Personal history</span><h3>Recent attendance</h3></div></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Status</th><th>Check in</th><th>Check out</th><th>Hours</th></tr></thead><tbody id="employeeRecords"></tbody></table></div></article>
+      <article class="attendance-card correction-card">
+        <div class="card-heading"><div><span class="eyebrow">Need an update?</span><h3>Request an attendance correction</h3></div></div>
+        <form id="correctionForm" class="inline-form correction-form">
+          <label>Attendance date<input name="date" type="date" required></label>
+          <label>Requested check-in<input name="checkIn" type="datetime-local"></label>
+          <label>Requested check-out<input name="checkOut" type="datetime-local"></label>
+          <label class="wide-label">Reason<textarea name="note" rows="2" required maxlength="1000"></textarea></label>
+          <button class="button button-submit" type="submit">Send for admin review</button>
+          <p id="correctionStatus" class="portal-status wide-label" aria-live="polite"></p>
+        </form>
+      </article>
+    </section>
+
+    <section id="adminDashboard" class="hidden">
+      <div class="portal-title"><div><span class="eyebrow">Authorized administration</span><h2>Attendance dashboard</h2><p class="muted">Employee GPS details are visible to administrators only.</p></div></div>
+      <div id="backupReminder" class="backup-reminder"></div>
+      <form id="filterForm" class="attendance-card filter-card">
+        <label>Dashboard date<input name="date" type="date" required></label>
+        <label>From<input name="from" type="date"></label>
+        <label>To<input name="to" type="date"></label>
+        <label>Month<input name="month" type="month"></label>
+        <label>Employee<select name="employeeId"><option value="">All employees</option></select></label>
+        <button class="button button-submit" type="submit">Apply filters</button>
+      </form>
+      <div class="metric-grid">
+        <article class="metric-card"><small>EMPLOYEES</small><strong id="metricEmployees">0</strong><span>Active accounts</span></article>
+        <article class="metric-card"><small>PRESENT</small><strong id="metricPresent">0</strong><span id="metricPresentLabel">Selected date</span></article>
+        <article class="metric-card"><small>ABSENT</small><strong id="metricAbsent">0</strong><span>Not checked in / leave</span></article>
+        <article class="metric-card"><small>ON LEAVE</small><strong id="metricLeave">0</strong><span>Approved by admin</span></article>
+        <article class="metric-card"><small>CHECKED IN</small><strong id="metricCheckedIn">0</strong><span>Currently working</span></article>
+      </div>
+      <article class="attendance-card admin-records">
+        <div class="card-heading report-heading"><div><span class="eyebrow">Attendance records</span><h3>Times, locations &amp; hours</h3></div><div class="download-actions"><button class="button button-quiet" data-export="csv" type="button">Download CSV</button><button class="button button-quiet" data-export="pdf" type="button">Download PDF</button><button class="button button-backup" data-export="json" type="button">Download Weekly Backup</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>Date / employee</th><th>Status / site</th><th>Check in</th><th>Check out</th><th>Hours / OT</th></tr></thead><tbody id="adminRecords"></tbody></table></div>
+      </article>
+      <div class="admin-management-grid">
+        <article class="attendance-card">
+          <div class="card-heading"><div><span class="eyebrow">Team setup</span><h3>Add employee</h3></div></div>
+          <form id="employeeCreateForm" class="stack-form">
+            <label>Employee name<input name="name" required maxlength="100"></label><label>Username<input name="username" required minlength="3" maxlength="40" pattern="[A-Za-z0-9._-]+" autocomplete="off"></label><label>Initial password<input name="password" type="password" required minlength="12" autocomplete="new-password"></label>
+            <label>Client / site<select name="siteId"><option value="">No site assigned</option></select></label>
+            <button class="button button-submit" type="submit">Create employee login</button><p id="employeeCreateStatus" class="portal-status" aria-live="polite"></p>
+          </form>
+          <div id="employeeList" class="compact-list"></div>
+        </article>
+        <article class="attendance-card">
+          <div class="card-heading"><div><span class="eyebrow">Client allocation</span><h3>Add client / site</h3></div></div>
+          <form id="siteCreateForm" class="stack-form">
+            <label>Client name<input name="client" required maxlength="120"></label><label>Site name<input name="name" required maxlength="120"></label><label>Site address<input name="address" maxlength="250"></label>
+            <button class="button button-submit" type="submit">Save client / site</button><p id="siteCreateStatus" class="portal-status" aria-live="polite"></p>
+          </form>
+          <div id="siteList" class="compact-list"></div>
+          <hr class="soft-rule">
+          <h3>Record leave</h3>
+          <form id="leaveForm" class="stack-form">
+            <label>Employee<select name="employeeId" required><option value="">Choose employee</option></select></label><label>Leave date<input name="date" type="date" required></label><label>Note<input name="note" maxlength="300"></label>
+            <button class="button button-quiet" type="submit">Mark on leave</button><p id="leaveStatus" class="portal-status" aria-live="polite"></p>
+          </form>
+        </article>
+      </div>
+      <article class="attendance-card correction-admin">
+        <div class="card-heading"><div><span class="eyebrow">Admin approval</span><h3>Correction requests</h3></div></div>
+        <div id="correctionRequests" class="compact-list"></div>
+      </article>
+      <article class="attendance-card restore-note"><span class="eyebrow">Backup &amp; recovery</span><h3>Keep a secure copy of your records.</h3><p>Weekly JSON backups are admin-only and include the selected attendance range, employee account hashes, client/site details and correction requests. To restore, stop the server, preserve a copy of the current <code>data</code> folder, then use the backup’s <code>employees</code>, <code>attendance</code>, <code>sites</code>, and <code>correctionRequests</code> arrays to rebuild the matching <code>data/attendance-*.json</code> files as JSON arrays. Keep the backup private; hashes are password-protected but still sensitive.</p></article>
+    </section>
+  </main>
+  <footer class="attendance-footer"><a href="/">← Return to Ecronx Technologies</a><span>Secure workforce operations</span></footer>
+  <script src="/attendance.js" defer></script>
+</body>
+</html>
