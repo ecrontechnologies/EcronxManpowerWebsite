@@ -1,0 +1,16 @@
+{
+  "name": "ecronx-manpower-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ecronx Manpower Website static frontend",
+  "scripts": {
+    "dev": "node build.js --dev && node serve.js",
+    "build": "node build.js",
+    "start": "node serve.js",
+    "check": "node --check build.js && node --check serve.js && node --check public/app.js && node --check public/attendance.js"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  }
+}

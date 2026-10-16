@@ -32,6 +32,8 @@
 .portal-status { min-height: 20px; margin: 0; color: #53636d; font-size: 12px; }
 .portal-status.error { color: #a63835; }
 .portal-status.success { color: #087448; }
+.link-button { align-self: flex-start; margin: 2px 0 0; padding: 0; border: 0; background: none; color: #087448; font: inherit; font-size: 12px; text-decoration: underline; cursor: pointer; }
+.link-button:hover { color: #045c39; }
 .location-note { margin: 23px 0 0; padding-top: 16px; border-top: 1px solid #e8ece9; color: #748087; font-size: 11px; line-height: 1.65; }
 .location-note span { margin-right: 5px; color: var(--blue); }
 .hidden { display: none!important; }

@@ -37,19 +37,50 @@
         <label>Employee username<input name="username" required autocomplete="username"></label>
         <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
         <button class="button button-submit" type="submit">Sign in to attendance <span aria-hidden="true">↗</span></button>
+        <button id="employeeForgot" class="link-button" type="button">Forgot your password?</button>
         <p id="employeeLoginStatus" class="portal-status" aria-live="polite"></p>
       </form>
       <form id="adminLoginForm" class="login-form hidden">
         <label>Admin username<input name="username" required autocomplete="username"></label>
         <label>Admin password<input name="password" type="password" required autocomplete="current-password"></label>
         <button class="button button-submit" type="submit">Open admin dashboard <span aria-hidden="true">↗</span></button>
+        <button id="adminForgot" class="link-button" type="button">Forgot administrator password?</button>
         <p id="adminLoginStatus" class="portal-status" aria-live="polite"></p>
+      </form>
+
+      <form id="recoveryForm" class="login-form hidden">
+        <div class="login-heading"><div><span class="eyebrow">Password recovery</span><h3 id="recoveryTitle">Recover access</h3></div></div>
+        <p id="recoveryHint" class="muted"></p>
+        <div id="recoveryStepRequest">
+          <label>Username<input name="username" required autocomplete="username"></label>
+          <button class="button button-submit" type="submit">Send verification code <span aria-hidden="true">↗</span></button>
+        </div>
+        <div id="recoveryStepVerify" class="hidden">
+          <label>Verification code<input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"></label>
+          <button class="button button-submit" type="submit">Verify code <span aria-hidden="true">↗</span></button>
+        </div>
+        <div id="recoveryStepConfirm" class="hidden">
+          <label>New password<input name="password" type="password" required autocomplete="new-password" minlength="12"></label>
+          <label>Confirm new password<input name="confirm" type="password" required autocomplete="new-password" minlength="12"></label>
+          <button class="button button-submit" type="submit">Set new password <span aria-hidden="true">↗</span></button>
+        </div>
+        <button id="recoveryCancel" class="link-button" type="button">Back to sign in</button>
+        <p id="recoveryStatus" class="portal-status" aria-live="polite"></p>
       </form>
       <p class="location-note"><span aria-hidden="true">◎</span> GPS is requested only when you press Check in or Check out. Location is not tracked in the background.</p>
     </section>
 
     <section id="employeeDashboard" class="hidden">
-      <div class="portal-title"><div><span class="eyebrow">Employee attendance</span><h2>Good day, <span id="employeeName"></span></h2><p id="employeeSite" class="muted"></p></div></div>
+      <div class="portal-title"><div><span class="eyebrow">Employee attendance</span><h2>Good day, <span id="employeeName"></span></h2><p id="employeeSite" class="muted"></p></div><button id="employeeChangePassword" class="button button-quiet" type="button">Change password</button></div>
+      <form id="employeeChangePasswordForm" class="attendance-card login-form hidden">
+        <div class="card-heading"><div><span class="eyebrow">Account security</span><h3>Change your password</h3></div></div>
+        <label>Current password<input name="currentPassword" type="password" required autocomplete="current-password"></label>
+        <label>New password<input name="newPassword" type="password" required minlength="12" autocomplete="new-password"></label>
+        <label>Confirm new password<input name="confirmPassword" type="password" required minlength="12" autocomplete="new-password"></label>
+        <button class="button button-submit" type="submit">Update password <span aria-hidden="true">↗</span></button>
+        <button id="employeeChangeCancel" class="link-button" type="button">Cancel</button>
+        <p id="employeeChangeStatus" class="portal-status" aria-live="polite"></p>
+      </form>
       <div class="employee-layout">
         <article class="attendance-card today-card">
           <div class="card-heading"><div><span class="eyebrow">Today</span><h3 id="todayDate"></h3></div><span id="attendancePill" class="status-pill">Not checked in</span></div>
@@ -75,7 +106,16 @@
     </section>
 
     <section id="adminDashboard" class="hidden">
-      <div class="portal-title"><div><span class="eyebrow">Authorized administration</span><h2>Attendance dashboard</h2><p class="muted">Employee GPS details are visible to administrators only.</p></div></div>
+      <div class="portal-title"><div><span class="eyebrow">Authorized administration</span><h2>Attendance dashboard</h2><p class="muted">Employee GPS details are visible to administrators only.</p></div><button id="adminChangePassword" class="button button-quiet" type="button">Change password</button></div>
+      <form id="adminChangePasswordForm" class="attendance-card login-form hidden">
+        <div class="card-heading"><div><span class="eyebrow">Account security</span><h3>Change administrator password</h3></div></div>
+        <label>Current password<input name="currentPassword" type="password" required autocomplete="current-password"></label>
+        <label>New password<input name="newPassword" type="password" required minlength="12" autocomplete="new-password"></label>
+        <label>Confirm new password<input name="confirmPassword" type="password" required minlength="12" autocomplete="new-password"></label>
+        <button class="button button-submit" type="submit">Update password <span aria-hidden="true">↗</span></button>
+        <button id="adminChangeCancel" class="link-button" type="button">Cancel</button>
+        <p id="adminChangeStatus" class="portal-status" aria-live="polite"></p>
+      </form>
       <div id="backupReminder" class="backup-reminder"></div>
       <form id="filterForm" class="attendance-card filter-card">
         <label>Dashboard date<input name="date" type="date" required></label>
@@ -129,6 +169,7 @@
     </section>
   </main>
   <footer class="attendance-footer"><a href="/">← Return to Ecronx Technologies</a><span>Secure workforce operations</span></footer>
+  <script src="/config.js"></script>
   <script src="/attendance.js" defer></script>
 </body>
 </html>

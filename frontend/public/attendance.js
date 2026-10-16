@@ -3,6 +3,8 @@ const $$ = (selector) => [...document.querySelectorAll(selector)];
 let token = '';
 let accessRole = '';
 let adminData = null;
+const API_BASE_URL = String(window.APP_CONFIG?.API_BASE_URL || '').replace(/\/+$/, '');
+const apiUrl = (url) => `${API_BASE_URL}${url.startsWith('/') ? url : `/${url}`}`;
 
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -20,7 +22,7 @@ async function api(url, options = {}) {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers || {}),
   };
-  const response = await fetch(url, { ...options, headers, cache: 'no-store' });
+  const response = await fetch(apiUrl(url), { ...options, headers, cache: 'no-store' });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || 'Request failed. Please try again.');
   return data;
@@ -345,7 +347,7 @@ async function downloadReport(format) {
   const from = filters.from.value || filters.date.value;
   const to = filters.to.value || filters.date.value;
   const query = new URLSearchParams({ from, to, format });
-  const response = await fetch(`/api/attendance/admin/backup?${query}`, {
+  const response = await fetch(apiUrl(`/api/attendance/admin/backup?${query}`), {
     headers: { Authorization: `Bearer ${token}` }, cache: 'no-store',
   });
   if (!response.ok) {
@@ -375,7 +377,7 @@ async function logout() {
   const oldToken = token;
   token = '';
   try {
-    if (oldToken) await fetch(accessRole === 'admin' ? '/api/admin/logout' : '/api/attendance/employee/logout', {
+    if (oldToken) await fetch(apiUrl(accessRole === 'admin' ? '/api/admin/logout' : '/api/attendance/employee/logout'), {
       method: 'POST', headers: { Authorization: `Bearer ${oldToken}` }, cache: 'no-store',
     });
   } finally {
@@ -394,3 +396,124 @@ $('#portalLogout').addEventListener('click', logout);
 if (!window.isSecureContext) {
   $('#employeeLoginStatus').textContent = 'GPS attendance requires HTTPS or http://localhost.';
 }
+
+// --- Change password (employee and administrator) --------------------------
+async function submitPasswordChange(formSelector, statusSelector, buttonSelector) {
+  const form = $(formSelector);
+  const button = $(buttonSelector);
+  setStatus(statusSelector, 'Updating password…');
+  button.disabled = true;
+  try {
+    await api('/api/password/change', {
+      method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(form).entries())),
+    });
+    form.reset();
+    form.classList.add('hidden');
+    setStatus(statusSelector, 'Password updated. Please sign in again.', 'success');
+    await logout();
+    setStatus('#employeeLoginStatus', 'Your password was changed. Sign in with the new password.', 'success');
+  } catch (error) {
+    setStatus(statusSelector, error.message, 'error');
+  } finally { button.disabled = false; }
+}
+
+$('#employeeChangePassword').addEventListener('click', () => {
+  $('#employeeChangePasswordForm').classList.remove('hidden');
+  setStatus('#employeeChangeStatus', '');
+});
+$('#employeeChangeCancel').addEventListener('click', () => $('#employeeChangePasswordForm').classList.add('hidden'));
+$('#employeeChangePasswordForm').addEventListener('submit', (event) => {
+  event.preventDefault();
+  submitPasswordChange('#employeeChangePasswordForm', '#employeeChangeStatus', '#employeeChangePasswordForm .button-submit');
+});
+
+$('#adminChangePassword').addEventListener('click', () => {
+  $('#adminChangePasswordForm').classList.remove('hidden');
+  setStatus('#adminChangeStatus', '');
+});
+$('#adminChangeCancel').addEventListener('click', () => $('#adminChangePasswordForm').classList.add('hidden'));
+$('#adminChangePasswordForm').addEventListener('submit', (event) => {
+  event.preventDefault();
+  submitPasswordChange('#adminChangePasswordForm', '#adminChangeStatus', '#adminChangePasswordForm .button-submit');
+});
+
+// --- Password recovery (time-limited emailed verification code) ------------
+const recovery = { role: 'admin', username: '', code: '', ticket: '', step: 'request' };
+
+function showRecoveryStep(step) {
+  recovery.step = step;
+  $('#recoveryStepRequest').classList.toggle('hidden', step !== 'request');
+  $('#recoveryStepVerify').classList.toggle('hidden', step !== 'verify');
+  $('#recoveryStepConfirm').classList.toggle('hidden', step !== 'confirm');
+}
+
+function openRecovery(role) {
+  recovery.role = role;
+  recovery.username = '';
+  recovery.code = '';
+  recovery.ticket = '';
+  $('#recoveryForm').classList.remove('hidden');
+  $('#employeeLoginForm').classList.add('hidden');
+  $('#adminLoginForm').classList.add('hidden');
+  $('#recoveryTitle').textContent = role === 'admin' ? 'Recover administrator access' : 'Recover employee access';
+  $('#recoveryHint').textContent = 'Enter your username to receive a 6-digit verification code by email. Codes expire quickly and password resets are never granted on the username alone.';
+  $('#recoveryForm').reset();
+  setStatus('#recoveryStatus', '');
+  showRecoveryStep('request');
+}
+
+$('#employeeForgot').addEventListener('click', () => openRecovery('employee'));
+$('#adminForgot').addEventListener('click', () => openRecovery('admin'));
+$('#recoveryCancel').addEventListener('click', () => {
+  $('#recoveryForm').classList.add('hidden');
+  const employee = recovery.role === 'employee';
+  $('#employeeLoginForm').classList.toggle('hidden', !employee);
+  $('#adminLoginForm').classList.toggle('hidden', employee);
+  $$('.login-tab').forEach((tab) => {
+    const active = tab.dataset.login === (employee ? 'employee' : 'admin');
+    tab.classList.toggle('active', active);
+    tab.setAttribute('aria-selected', String(active));
+  });
+  setStatus('#recoveryStatus', '');
+});
+
+$('#recoveryForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+  try {
+    if (recovery.step === 'request') {
+      recovery.username = String(data.username || '').trim();
+      setStatus('#recoveryStatus', 'Sending verification code…');
+      const result = await api('/api/password/reset/request', {
+        method: 'POST', body: JSON.stringify({ username: recovery.username, role: recovery.role }),
+      });
+      setStatus('#recoveryStatus', result.message || 'Verification code sent.', 'success');
+      showRecoveryStep('verify');
+      return;
+    }
+    if (recovery.step === 'verify') {
+      recovery.code = String(data.code || '').trim();
+      setStatus('#recoveryStatus', 'Verifying code…');
+      const result = await api('/api/password/reset/verify', {
+        method: 'POST', body: JSON.stringify({ username: recovery.username, code: recovery.code }),
+      });
+      recovery.ticket = result.ticket;
+      setStatus('#recoveryStatus', 'Code verified. Choose a new password.', 'success');
+      showRecoveryStep('confirm');
+      return;
+    }
+    setStatus('#recoveryStatus', 'Setting your new password…');
+    const result = await api('/api/password/reset/confirm', {
+      method: 'POST',
+      body: JSON.stringify({
+        username: recovery.username,
+        code: recovery.code,
+        ticket: recovery.ticket,
+        newPassword: String(data.password || ''),
+        confirmPassword: String(data.confirm || ''),
+      }),
+    });
+    setStatus('#recoveryStatus', result.message || 'Your password has been reset. You can sign in now.', 'success');
+    setTimeout(() => $('#recoveryCancel').click(), 2500);
+  } catch (error) { setStatus('#recoveryStatus', error.message, 'error'); }
+});

@@ -1,0 +1,12 @@
+# Ecronx Manpower - Django backend dependencies
+# Install with:  .\.venv\Scripts\python.exe -m pip install -r django_backend\requirements.txt
+Django>=5.1,<6.0
+djangorestframework>=3.15
+django-cors-headers>=4.4
+python-dotenv>=1.0
+psycopg[binary]>=3.2,<4.0
+gunicorn>=23.0,<24.0
+# Optional: only needed when DJANGO_DB_ENGINE=mysql/mariadb. mysqlclient needs
+# system dev libraries, so it is kept out of the default install to avoid
+# breaking PostgreSQL deploys on Render.
+# mysqlclient>=2.2,<3.0

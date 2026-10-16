@@ -1,0 +1,111 @@
+# Render Blueprint — Ecronx Manpower Website + Django backend.
+# Creates the Django API/attendance service and the Node website service.
+# Docs: https://render.com/docs/blueprint-spec
+#
+# After the first deploy, set the secret values in the Render dashboard
+# (Environment tab) for BOTH services. They are marked `sync: false` below so
+# nothing secret is committed to git.
+
+services:
+  # ---------------------------------------------------------------------------
+  # 1. Django backend — API, attendance, admin, database (system of record).
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: ecronx-django
+    runtime: python
+    plan: free
+    rootDir: django_backend
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py migrate --noinput
+    startCommand: gunicorn ecronx.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false
+      - key: DJANGO_CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: DJANGO_CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: DJANGO_DB_ENGINE
+        value: postgresql
+      - key: DJANGO_DB_NAME
+        fromDatabase:
+          name: ecronx-db
+          property: database
+      - key: DJANGO_DB_USER
+        fromDatabase:
+          name: ecronx-db
+          property: user
+      - key: DJANGO_DB_PASSWORD
+        fromDatabase:
+          name: ecronx-db
+          property: password
+      - key: DJANGO_DB_HOST
+        fromDatabase:
+          name: ecronx-db
+          property: host
+      - key: DJANGO_DB_PORT
+        fromDatabase:
+          name: ecronx-db
+          property: port
+      - key: ATTENDANCE_TIME_ZONE
+        value: Asia/Kolkata
+      - key: TOKEN_TTL_HOURS
+        value: "12"
+      - key: DJANGO_EMAIL_BACKEND
+        sync: false
+      - key: DJANGO_EMAIL_HOST
+        sync: false
+      - key: DJANGO_EMAIL_PORT
+        sync: false
+      - key: DJANGO_EMAIL_HOST_USER
+        sync: false
+      - key: DJANGO_EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DJANGO_DEFAULT_FROM_EMAIL
+        sync: false
+
+  # ---------------------------------------------------------------------------
+  # 2. Node website — serves the built static frontend and proxies /api/*.
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: ecronx-website
+    runtime: node
+    plan: free
+    buildCommand: |
+      npm install
+      npm run build --prefix frontend
+    startCommand: node backend/server.js
+    healthCheckPath: /api/health    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: SERVE_FRONTEND
+        value: "true"
+      # The frontend is compiled against its own public URL, so set API_BASE_URL
+      # to this website's public origin (e.g. https://ecronx-website.onrender.com).
+      # It is consumed at BUILD time by `npm run build --prefix frontend`.
+      - key: API_BASE_URL
+        sync: false
+      # Node proxies /api/* to Django. Point this at the Django service's public
+      # URL (e.g. https://ecronx-django.onrender.com). Read at RUNTIME.
+      - key: DJANGO_BASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: UPLOADS_DIR
+        sync: false
+
+databases:
+  - name: ecronx-db
+    plan: free
+    databaseName: ecronx
+    user: ecronx

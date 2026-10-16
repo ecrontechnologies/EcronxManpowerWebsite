@@ -1,0 +1,18 @@
+node_modules/
+frontend/dist/
+.env
+.env.*
+!.env.example
+*.log
+npm-debug.log*
+Thumbs.db
+.DS_Store
+
+# Django / Python
+.venv/
+__pycache__/
+*.py[cod]
+django_backend/db.sqlite3
+django_backend/db.sqlite3-journal
+django_backend/media/
+django_backend/staticfiles/

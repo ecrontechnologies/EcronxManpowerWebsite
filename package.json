@@ -13,7 +13,11 @@
     "start": "npm run build:local && cross-env SERVE_FRONTEND=true node backend/server.js",
     "build:local": "cross-env API_BASE_URL=http://localhost:3000 npm run build --prefix frontend",
     "build": "npm run build --prefix frontend",
-    "check": "npm run check --prefix backend && npm run check --prefix frontend"
+    "check": "npm run check --prefix backend && npm run check --prefix frontend",
+    "django:migrate": ".venv\\\\Scripts\\\\python.exe django_backend\\\\manage.py migrate",
+    "django:run": ".venv\\\\Scripts\\\\python.exe django_backend\\\\manage.py runserver 8000",
+    "django:admin": ".venv\\\\Scripts\\\\python.exe django_backend\\\\manage.py createsuperuser",
+    "django:check": ".venv\\\\Scripts\\\\python.exe django_backend\\\\manage.py check"
   },
   "devDependencies": {
     "cross-env": "^7.0.3"
